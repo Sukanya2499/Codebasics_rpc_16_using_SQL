@@ -21,3 +21,25 @@ WHERE _date >= DATE_SUB(
   Result:
   
 <img width="165" height="47" alt="Screenshot (340)" src="https://github.com/user-attachments/assets/e7e900b8-d808-4c38-8080-ef6d8849ec25" />
+
+** Top 5 States with High Avg AQI:
+
+Query: select state, round(avg(aqi_value),2) as avg_aqi from aqi_data
+group by state
+order by avg_aqi desc
+limit 5;
+
+Result:
+
+<img width="196" height="131" alt="Screenshot (335)" src="https://github.com/user-attachments/assets/7cc3e0d2-c239-47d8-9a6b-405fe3933e70" />
+
+** 5 Cleanest States with Avg AQI:
+
+Query: select state, round(avg(aqi_value),2) as avg_aqi from aqi_data
+group by state
+order by avg_aqi asc
+limit 5;
+
+Result:
+
+<img width="270" height="132" alt="Screenshot (336)" src="https://github.com/user-attachments/assets/1a985457-3364-4a39-bf00-ac06a223b9c0" />
