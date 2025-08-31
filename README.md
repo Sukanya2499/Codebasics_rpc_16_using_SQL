@@ -69,3 +69,77 @@ limit 5;
 Result:
 
 <img width="192" height="135" alt="Screenshot (338)" src="https://github.com/user-attachments/assets/4f4b63be-4dbb-41e4-8528-1e0749d7afb2" />
+
+** Top 5 States based on Avg AQI in Last 6 Months:
+
+Query: SELECT 
+    state,ROUND(AVG(aqi_value),2) AS avg_aqi_last_6_months
+FROM aqi_data
+WHERE _date >= DATE_SUB(
+                    (SELECT MAX(_date) FROM aqi_data), 
+                    INTERVAL 6 MONTH
+                  )
+  AND _date <= (SELECT MAX(_date) FROM aqi_data)
+  group by state
+  order by avg_aqi_last_6_months desc
+  limit 5;
+
+  Result:
+
+  <img width="286" height="133" alt="Screenshot (341)" src="https://github.com/user-attachments/assets/59ff85bd-6d31-4fe1-b123-805de865c828" />
+
+
+  ** Bottom 5 States with Avg AQI in Last 6 Months:
+
+  Query: SELECT 
+    state,ROUND(AVG(aqi_value),2) AS avg_aqi_last_6_months
+FROM aqi_data
+WHERE _date >= DATE_SUB(
+                    (SELECT MAX(_date) FROM aqi_data), 
+                    INTERVAL 6 MONTH
+                  )
+  AND _date <= (SELECT MAX(_date) FROM aqi_data)
+  group by state
+  order by avg_aqi_last_6_months asc
+  limit 5;
+
+Result:
+
+<img width="363" height="134" alt="Screenshot (342)" src="https://github.com/user-attachments/assets/dcfdfc49-cfad-457a-84c4-fcec70f9406a" />
+
+** Top 5 Areas based on Avg AQI in Last 6 Months:
+
+Query: SELECT 
+    area,ROUND(AVG(aqi_value),2) AS avg_aqi_last_6_months
+FROM aqi_data
+WHERE _date >= DATE_SUB(
+                    (SELECT MAX(_date) FROM aqi_data), 
+                    INTERVAL 6 MONTH
+                  )
+  AND _date <= (SELECT MAX(_date) FROM aqi_data)
+  group by area
+  order by avg_aqi_last_6_months desc
+  limit 5;
+
+Result:
+
+<img width="260" height="132" alt="Screenshot (343)" src="https://github.com/user-attachments/assets/479aae5e-90ef-48c4-80bd-c5a7ac91bcf9" />
+
+
+** Top 5 Cleaest Area with Avg AQI in Last 6 Months:
+
+Query: SELECT 
+    area,ROUND(AVG(aqi_value),2) AS avg_aqi_last_6_months
+FROM aqi_data
+WHERE _date >= DATE_SUB(
+                    (SELECT MAX(_date) FROM aqi_data), 
+                    INTERVAL 6 MONTH
+                  )
+  AND _date <= (SELECT MAX(_date) FROM aqi_data)
+  group by area
+  order by avg_aqi_last_6_months asc
+  limit 5;
+
+  Result:
+
+<img width="286" height="135" alt="Screenshot (344)" src="https://github.com/user-attachments/assets/5eca8ade-948f-41fa-9664-681420724d9e" />
