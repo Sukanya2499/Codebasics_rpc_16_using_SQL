@@ -137,9 +137,53 @@ WHERE _date >= DATE_SUB(
                   )
   AND _date <= (SELECT MAX(_date) FROM aqi_data)
   group by area
+
+
+Result:
+
+<img width="286" height="135" alt="Screenshot (344)" src="https://github.com/user-attachments/assets/5eca8ade-948f-41fa-9664-681420724d9e" />
+
+** Avg AQI on Week Days & Week Ends in Metro Cities:
+
+  Query: SELECT 
+    area,
+    CASE 
+        WHEN DAYOFWEEK(_date) IN (1,7) THEN 'Weekend'   
+        ELSE 'Weekday'
+    END AS day_type,
+    ROUND(AVG(aqi_value),2) AS avg_aqi
+FROM aqi_data
+WHERE area IN ('Delhi','Ahmedabad','Pune','Mumbai',
+               'Kolkata','Hydrabad','Bengaluru','Chennai')
+GROUP BY area,
+         CASE 
+            WHEN DAYOFWEEK(_date) IN (1,7) THEN 'Weekend'
+            ELSE 'Weekday'
+         END
+ORDER BY area, day_type;
   order by avg_aqi_last_6_months asc
   limit 5;
 
   Result:
 
-<img width="286" height="135" alt="Screenshot (344)" src="https://github.com/user-attachments/assets/5eca8ade-948f-41fa-9664-681420724d9e" />
+  
+<img width="240" height="323" alt="Screenshot (346)" src="https://github.com/user-attachments/assets/9f9a9aee-28de-4263-b55f-74c3033d8217" />
+
+** Avg AQI on Week Days & Week Ends in Metro Cities in Last 6 Months:
+
+Query: SELECT 
+    area,
+    ROUND(AVG(CASE WHEN DAYOFWEEK(_date) IN (1,7) THEN aqi_value END),2) AS weekend_avg_aqi,
+    ROUND(AVG(CASE WHEN DAYOFWEEK(_date) NOT IN (1,7) THEN aqi_value END),2) AS weekday_avg_aqi
+FROM aqi_data
+WHERE area IN ('Delhi','Ahmedabad','Pune','Mumbai',
+               'Kolkata','Hydrabad','Bengaluru','Chennai')
+  AND _date BETWEEN DATE_SUB((SELECT MAX(_date) FROM aqi_data), INTERVAL 6 MONTH)
+               AND (SELECT MAX(_date) FROM aqi_data)
+GROUP BY area
+ORDER BY area;
+
+Result:
+
+<img width="354" height="176" alt="Screenshot (347)" src="https://github.com/user-attachments/assets/dad05025-532f-4069-8b06-25d0a2e7c512" />
+
