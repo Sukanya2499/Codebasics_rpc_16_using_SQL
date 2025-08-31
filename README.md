@@ -252,3 +252,24 @@ Result:
 
 <img width="392" height="538" alt="Screenshot (349)" src="https://github.com/user-attachments/assets/78edc708-022b-4c56-9b5a-d862de8724a0" />
 
+** Top 5 polluted states with percentage of days in each air quality status:
+
+Query: SELECT
+    state,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Good' THEN 1 END) / COUNT(*), 2) AS Good_pct,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Satisfactory' THEN 1 END) / COUNT(*), 2) AS Satisfactory_pct,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Moderate' THEN 1 END) / COUNT(*), 2) AS Moderate_pct,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Poor' THEN 1 END) / COUNT(*), 2) AS Poor_pct,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Very Poor' THEN 1 END) / COUNT(*), 2) AS Very_Poor_pct,
+    ROUND(100.0 * COUNT(CASE WHEN air_quality_status = 'Severe' THEN 1 END) / COUNT(*), 2) AS Severe_pct
+FROM aqi_data
+WHERE state IN ('Delhi', 'Jharkhand', 'Himachal Pradesh', 'Bihar', 'Chandigarh')
+GROUP BY state
+ORDER BY state;
+
+Result:
+
+<img width="706" height="135" alt="Screenshot (351)" src="https://github.com/user-attachments/assets/a659350f-58b2-47ad-ac60-608729aaa32e" />
+
+
+
