@@ -187,3 +187,68 @@ Result:
 
 <img width="354" height="176" alt="Screenshot (347)" src="https://github.com/user-attachments/assets/dad05025-532f-4069-8b06-25d0a2e7c512" />
 
+
+** Top 2 & Bottom 2 Pollutants in Sount Indian States:
+
+Query: WITH RECURSIVE split_pollutants AS (
+    -- Step 1:  initial split
+    SELECT 
+        _date,
+        state,
+        area,
+        TRIM(SUBSTRING_INDEX(prominent_pollutants, '-', 1)) AS pollutant,
+        SUBSTRING(prominent_pollutants, LENGTH(SUBSTRING_INDEX(prominent_pollutants, '-', 1)) + 2) AS rest
+    FROM aqi_data
+    WHERE state IN ('Andhra Pradesh','Karnataka','Kerala','Puducherry','Telangana','Tamil Nadu')
+
+    UNION ALL
+
+    -- Step 2:  recursive split
+    SELECT 
+        _date,
+        state,
+        area,
+        TRIM(SUBSTRING_INDEX(rest, '-', 1)) AS pollutant,
+        SUBSTRING(rest, LENGTH(SUBSTRING_INDEX(rest, '-', 1)) + 2) AS rest
+    FROM split_pollutants
+    WHERE rest <> ''
+),
+pollutant_count AS (
+    -- Step 3: pollutants count per state
+    SELECT 
+        state,
+        pollutant,
+        COUNT(*) AS pollutant_count
+    FROM split_pollutants
+    WHERE pollutant <> ''   -- exclude blanks if any
+    GROUP BY state, pollutant
+),
+ranked AS (
+    -- Step 4: pollutants ranking within each state
+    SELECT 
+        state,
+        pollutant,
+        pollutant_count,
+        RANK() OVER (PARTITION BY state ORDER BY pollutant_count DESC) AS rnk_desc,
+        RANK() OVER (PARTITION BY state ORDER BY pollutant_count ASC)  AS rnk_asc
+    FROM pollutant_count
+)
+-- Step 5: top 2 and bottom 2 per state
+SELECT 
+    state,
+    pollutant,
+    pollutant_count,
+    CASE 
+        WHEN rnk_desc <= 2 THEN 'Top 2'
+        WHEN rnk_asc  <= 2 THEN 'Bottom 2'
+    END AS category
+FROM ranked
+WHERE rnk_desc <= 2 OR rnk_asc <= 2
+ORDER BY state, category, pollutant_count DESC;
+
+
+Result:
+
+
+<img width="392" height="538" alt="Screenshot (349)" src="https://github.com/user-attachments/assets/78edc708-022b-4c56-9b5a-d862de8724a0" />
+
